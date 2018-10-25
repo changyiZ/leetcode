@@ -6,8 +6,12 @@ class TreeNode(var `val`: Int = 0) {
     var left: TreeNode? = null
     var right: TreeNode? = null
 
-    fun main(args: Array<String>) {
-        print("Ready to Code~")
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val treeNode = buildTree(arrayOf(9,3,15,20,7).toIntArray(), arrayOf(9,15,7,20,3).toIntArray())
+            print(treeNode)
+        }
     }
 }
 
@@ -175,4 +179,22 @@ fun hasPathSum(root: TreeNode?, sum: Int): Boolean {
     }
 
     return hasPathSum(root.left , sum - current) || hasPathSum(root.right , sum - current)
+}
+
+fun buildTree(inorder: IntArray, postorder: IntArray): TreeNode? {
+    if (inorder.isEmpty() || postorder.isEmpty()) {
+        return null
+    }
+
+    val length = postorder.size
+    val value = postorder[length - 1]
+    val treeNode = TreeNode(value)
+    val index = inorder.indexOf(value) // == Left size
+    if (index > 0) {
+        treeNode.left = buildTree(inorder.sliceArray(0 until index), postorder.sliceArray(0 until index))
+    }
+    if (index + 1 < length) {
+        treeNode.right = buildTree(inorder.sliceArray(index + 1 until length), postorder.sliceArray(index until length - 1))
+    }
+    return  treeNode
 }
