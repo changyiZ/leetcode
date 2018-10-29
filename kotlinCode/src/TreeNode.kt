@@ -1,5 +1,6 @@
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.math.max
 
 class TreeNode(var `val`: Int = 0) {
@@ -9,8 +10,38 @@ class TreeNode(var `val`: Int = 0) {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val treeNode = buildTree(arrayOf(9,3,15,20,7).toIntArray(), arrayOf(9,15,7,20,3).toIntArray())
-            print(treeNode)
+            // val treeNode = buildTree(arrayOf(9,3,15,20,7).toIntArray(), arrayOf(9,15,7,20,3).toIntArray())
+            // print(treeNode)
+
+            val circularQueue = MyCircularQueue(3) // set the size to be 3
+            circularQueue.enQueue(1)  // return true
+            circularQueue.enQueue(2)  // return true
+            circularQueue.enQueue(3)  // return true
+            circularQueue.enQueue(4)  // return false, the queue is full
+            circularQueue.Rear()  // return 3
+            circularQueue.isFull()  // return true
+            circularQueue.deQueue()  // return true
+            circularQueue.enQueue(4)  // return true
+            circularQueue.Rear()  // return 4
+        }
+
+        fun buildTree(preorder: IntArray, inorder: IntArray): TreeLinkNode? {
+            if (inorder.isEmpty() || preorder.isEmpty()) {
+                return null
+            }
+
+            val root = preorder[0]
+            val treeNode = TreeLinkNode(root)
+            val index = inorder.indexOf(root) // Left size
+            if (index > 0) {
+                treeNode.left = buildTree(preorder.sliceArray(1 until 1 + index), inorder.sliceArray(0 until index))
+            }
+            val length = inorder.size
+            if (index + 1 < length) {
+                treeNode.right = buildTree(preorder.sliceArray(1 + index until length), inorder.sliceArray(1 + index until length))
+            }
+
+            return treeNode
         }
     }
 }
@@ -181,7 +212,7 @@ fun hasPathSum(root: TreeNode?, sum: Int): Boolean {
     return hasPathSum(root.left , sum - current) || hasPathSum(root.right , sum - current)
 }
 
-fun buildTree(inorder: IntArray, postorder: IntArray): TreeNode? {
+/*fun buildTree(inorder: IntArray, postorder: IntArray): TreeNode? {
     if (inorder.isEmpty() || postorder.isEmpty()) {
         return null
     }
@@ -197,4 +228,23 @@ fun buildTree(inorder: IntArray, postorder: IntArray): TreeNode? {
         treeNode.right = buildTree(inorder.sliceArray(index + 1 until length), postorder.sliceArray(index until length - 1))
     }
     return  treeNode
+}*/
+
+fun buildTree(preorder: IntArray, inorder: IntArray): TreeNode? {
+    if (inorder.isEmpty() || preorder.isEmpty()) {
+        return null
+    }
+
+    val root = preorder[0]
+    val treeNode = TreeNode(root)
+    val index = inorder.indexOf(root) // Left size
+    if (index > 0) {
+        treeNode.left = buildTree(preorder.sliceArray(1 until 1 + index), inorder.sliceArray(0 until index))
+    }
+    val length = inorder.size
+    if (index + 1 < length) {
+        treeNode.right = buildTree(preorder.sliceArray(1 + index until length), inorder.sliceArray(1 + index until length))
+    }
+
+    return treeNode
 }
